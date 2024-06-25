@@ -12,10 +12,8 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
 
-// Routes
-
-// Get All Tours
-app.get('/api/v1/tours', (req, res) => {
+// Handlers
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -23,10 +21,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
+};
 
-// Get One Tour
-app.get('/api/v1/tours/:id', (req, res) => {
+const getOneTour = (req, res) => {
   const tour = tours.find((el) => el.id === +req.params.id);
 
   if (!tour) {
@@ -42,10 +39,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       },
     });
   }
-});
+};
 
-// Post A Tour
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
@@ -67,10 +63,9 @@ app.post('/api/v1/tours', (req, res) => {
       }
     }
   );
-});
+};
 
-// Patch A Tour
-app.patch('/api/v1/tours/:id', (req, res) => {
+const patchTour = (req, res) => {
   const tour = tours.find((el) => el.id === +req.params.id);
 
   if (!tour) {
@@ -84,10 +79,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       message: 'Tour Has Updated.',
     });
   }
-});
+};
 
-// Delete A Tour
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   const tour = tours.find((el) => el.id === +req.params.id);
 
   if (!tour) {
@@ -101,7 +95,15 @@ app.delete('/api/v1/tours/:id', (req, res) => {
       data: null,
     });
   }
-});
+};
+
+// Routes
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+app
+  .route('/api/v1/tours/:id')
+  .get(getOneTour)
+  .patch(patchTour)
+  .delete(deleteTour);
 
 // Listen to the server
 app.listen(PORT, '127.0.0.1', () => {
