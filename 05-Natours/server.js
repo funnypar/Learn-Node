@@ -72,7 +72,7 @@ app.post('/api/v1/tours', (req, res) => {
 // Patch A Tour
 app.patch('/api/v1/tours/:id', (req, res) => {
   const tour = tours.find((el) => el.id === +req.params.id);
-  console.log(tour);
+
   if (!tour) {
     res.status(404).json({
       status: 'fail',
@@ -82,6 +82,23 @@ app.patch('/api/v1/tours/:id', (req, res) => {
     res.status(200).json({
       status: 'success',
       message: 'Tour Has Updated.',
+    });
+  }
+});
+
+// Delete A Tour
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const tour = tours.find((el) => el.id === +req.params.id);
+
+  if (!tour) {
+    res.status(404).json({
+      status: 'fail',
+      massage: 'Tour Not Found.',
+    });
+  } else {
+    res.status(204).json({
+      status: 'success',
+      data: null,
     });
   }
 });
