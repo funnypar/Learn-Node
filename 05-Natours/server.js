@@ -13,6 +13,8 @@ const tours = JSON.parse(
 );
 
 // Routes
+
+// Get All Tours
 app.get('/api/v1/tours', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -21,6 +23,25 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
+});
+
+// Get One Tours
+app.get('/api/v1/tours/:id', (req, res) => {
+  const tour = tours.find((el) => el.id === +req.params.id);
+
+  if (!tour) {
+    res.status(404).json({
+      status: 'fail',
+      massage: 'Tour Not Found.',
+    });
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  }
 });
 
 app.post('/api/v1/tours', (req, res) => {
