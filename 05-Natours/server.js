@@ -1,11 +1,19 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 // Global Variables
 const PORT = 8000;
 // Create app
 const app = express();
+
+// Middlewares
 app.use(express.json());
+app.use(morgan('dev'));
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 // Read Files
 const tours = JSON.parse(
