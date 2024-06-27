@@ -1,8 +1,20 @@
 const fs = require('fs');
 
+// Read Files
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8')
 );
+
+// Middleware Functions
+exports.checkId = (req, res, next, val) => {
+  if (!tours.find((el) => el.id === +val)) {
+    return res.status(404).json({
+      status: 'fail',
+      massage: 'Tour Not Found.',
+    });
+  }
+  next();
+};
 
 exports.getAllTours = (req, res) => {
   res.status(200).json({
@@ -17,19 +29,12 @@ exports.getAllTours = (req, res) => {
 exports.getOneTour = (req, res) => {
   const tour = tours.find((el) => el.id === +req.params.id);
 
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      massage: 'Tour Not Found.',
-    });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour,
-      },
-    });
-  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
 };
 
 exports.createTour = (req, res) => {
@@ -57,33 +62,15 @@ exports.createTour = (req, res) => {
 };
 
 exports.patchTour = (req, res) => {
-  const tour = tours.find((el) => el.id === +req.params.id);
-
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      massage: 'Tour Not Found.',
-    });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      message: 'Tour Has Updated.',
-    });
-  }
+  res.status(200).json({
+    status: 'success',
+    message: 'Tour Has Updated.',
+  });
 };
 
 exports.deleteTour = (req, res) => {
-  const tour = tours.find((el) => el.id === +req.params.id);
-
-  if (!tour) {
-    res.status(404).json({
-      status: 'fail',
-      massage: 'Tour Not Found.',
-    });
-  } else {
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
-  }
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
 };
