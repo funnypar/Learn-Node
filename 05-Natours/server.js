@@ -16,11 +16,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD,
 );
 
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-  })
-  .then(() => console.log('DB Is Connected!'));
+mongoose.connect(DB).then(() => console.log('DB Is Connected!'));
 
 // Listen to the server
 app.listen(PORT, '127.0.0.1', () => {

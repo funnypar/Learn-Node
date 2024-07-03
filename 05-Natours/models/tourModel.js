@@ -13,6 +13,7 @@ const tourSchema = new mongoose.Schema({
   raiting: {
     type: Number,
     default: 4.5,
+    required: [true, 'The Raiting Must Be Insert.'],
   },
 });
 
