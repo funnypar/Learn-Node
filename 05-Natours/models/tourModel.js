@@ -37,7 +37,7 @@ const tourSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'The Group size Must Be Insert.'],
   },
-  summary: {
+  sammary: {
     type: String,
     trim: true,
     required: [true, 'The Sammary Must Be Insert.'],
