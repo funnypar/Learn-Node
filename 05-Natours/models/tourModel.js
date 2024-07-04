@@ -10,10 +10,50 @@ const tourSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'The Price Must Be Insert.'],
   },
-  raiting: {
+  duration: {
+    type: Number,
+    required: [true, 'The Duration Must Be Insert.'],
+  },
+  difficulty: {
+    type: String,
+    required: [true, 'The Difficulty Must Be Insert.'],
+  },
+  ratingsQuantity: {
     type: Number,
     default: 4.5,
     required: [true, 'The Raiting Must Be Insert.'],
+  },
+  ratingsAverage: {
+    type: Number,
+    default: 4,
+  },
+  images: [String],
+  startDates: [Date],
+  secretTour: {
+    type: Boolean,
+    default: false,
+  },
+  maxGroupSize: {
+    type: Number,
+    required: [true, 'The Group size Must Be Insert.'],
+  },
+  summary: {
+    type: String,
+    trim: true,
+    required: [true, 'The Sammary Must Be Insert.'],
+  },
+  description: {
+    type: String,
+    trim: true,
+  },
+  imageCover: {
+    type: String,
+    trim: true,
+    required: [true, 'The Image Must Be Insert.'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 
