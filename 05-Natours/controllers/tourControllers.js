@@ -4,12 +4,21 @@ exports.getAllTours = async (req, res) => {
   try {
     let tours;
     if (req.query) {
+      // Get Simple Filtered Tours
       const queryObj = req.query;
+      // Delete Fields
       const excludedFields = ['page', 'field', 'sort', 'limit'];
       excludedFields.forEach((el) => delete queryObj[el]);
-
-      tours = await Tour.find(queryObj);
+      // Replace Operators
+      let queryStr = JSON.stringify(queryObj);
+      queryStr = queryStr.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        (match) => `$${match}`,
+      );
+      // Await tours
+      tours = await Tour.find(JSON.parse(queryStr));
     } else {
+      // Get All Tours
       tours = await Tour.find();
     }
 
