@@ -4,8 +4,10 @@ exports.getAllTours = async (req, res) => {
   try {
     let tours;
     if (req.query) {
+      // --------------------------- Filter -------------------------------------
       // Get Simple Filtered Tours
-      const queryObj = req.query;
+      // eslint-disable-next-line node/no-unsupported-features/es-syntax
+      const queryObj = { ...req.query };
       // Delete Fields
       const excludedFields = ['page', 'field', 'sort', 'limit'];
       excludedFields.forEach((el) => delete queryObj[el]);
@@ -15,8 +17,16 @@ exports.getAllTours = async (req, res) => {
         /\b(gte|gt|lt|lte)\b/g,
         (match) => `$${match}`,
       );
-      // Await tours
-      tours = await Tour.find(JSON.parse(queryStr));
+      let query = Tour.find(JSON.parse(queryStr));
+      // --------------------------- Sort ---------------------------------------
+      if (req.query.sort) {
+        const sortQuery = req.query.sort.split(',').join(' ');
+        query = query.sort(sortQuery);
+      } else {
+        query = query.sort('-createdAt');
+      }
+      // --------------------------- Await --------------------------------------
+      tours = await query;
     } else {
       // Get All Tours
       tours = await Tour.find();
