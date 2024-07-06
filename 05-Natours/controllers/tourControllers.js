@@ -18,7 +18,7 @@ exports.getAllTours = async (req, res) => {
         (match) => `$${match}`,
       );
       let query = Tour.find(JSON.parse(queryStr));
-      // --------------------------- Sort ---------------------------------------
+      // --------------------------- Sort ----------------------------------------
       if (req.query.sort) {
         const sortQuery = req.query.sort.split(',').join(' ');
         query = query.sort(sortQuery);
@@ -32,7 +32,20 @@ exports.getAllTours = async (req, res) => {
       } else {
         query = query.select('-__v');
       }
-      // --------------------------- Await --------------------------------------
+      // --------------------------- Pagination ----------------------------------
+      const page = +req.query.page || 1;
+      const limit = +req.query.limit || 100;
+      const skip = (page - 1) * limit;
+
+      query = query.skip(skip).limit(limit);
+
+      // handel empty page
+      if (req.query.page) {
+        const countDocs = await Tour.countDocuments();
+        if (skip >= countDocs) throw new Error('The Page Is Not Exist...');
+      }
+
+      // --------------------------- Await ---------------------------------------
       tours = await query;
     } else {
       // Get All Tours
