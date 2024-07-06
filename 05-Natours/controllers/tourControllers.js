@@ -9,7 +9,7 @@ exports.getAllTours = async (req, res) => {
       // eslint-disable-next-line node/no-unsupported-features/es-syntax
       const queryObj = { ...req.query };
       // Delete Fields
-      const excludedFields = ['page', 'field', 'sort', 'limit'];
+      const excludedFields = ['page', 'fields', 'sort', 'limit'];
       excludedFields.forEach((el) => delete queryObj[el]);
       // Replace Operators
       let queryStr = JSON.stringify(queryObj);
@@ -24,6 +24,13 @@ exports.getAllTours = async (req, res) => {
         query = query.sort(sortQuery);
       } else {
         query = query.sort('-createdAt');
+      }
+      // --------------------------- Field ---------------------------------------
+      if (req.query.fields) {
+        const fieldsQuery = req.query.fields.split(',').join(' ');
+        query = query.select(fieldsQuery);
+      } else {
+        query = query.select('-__v');
       }
       // --------------------------- Await --------------------------------------
       tours = await query;
