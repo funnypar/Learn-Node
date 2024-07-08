@@ -1,4 +1,5 @@
 const Tour = require('../models/tourModel');
+const APIFeatures = require('../utils/apiFeatures');
 
 // Middelwares
 exports.aliasTop5Cheap = (req, res, next) => {
@@ -10,56 +11,14 @@ exports.aliasTop5Cheap = (req, res, next) => {
 // Toures
 exports.getAllTours = async (req, res) => {
   try {
-    let tours;
-    if (req.query) {
-      // --------------------------- Filter -------------------------------------
-      // Get Simple Filtered Tours
-      // eslint-disable-next-line node/no-unsupported-features/es-syntax
-      const queryObj = { ...req.query };
-      // Delete Fields
-      const excludedFields = ['page', 'fields', 'sort', 'limit'];
-      excludedFields.forEach((el) => delete queryObj[el]);
-      // Replace Operators
-      let queryStr = JSON.stringify(queryObj);
-      queryStr = queryStr.replace(
-        /\b(gte|gt|lt|lte)\b/g,
-        (match) => `$${match}`,
-      );
-      let query = Tour.find(JSON.parse(queryStr));
-      // --------------------------- Sort ----------------------------------------
-      if (req.query.sort) {
-        const sortQuery = req.query.sort.split(',').join(' ');
-        query = query.sort(sortQuery);
-      } else {
-        query = query.sort('-createdAt');
-      }
-      // --------------------------- Field ---------------------------------------
-      if (req.query.fields) {
-        const fieldsQuery = req.query.fields.split(',').join(' ');
-        query = query.select(fieldsQuery);
-      } else {
-        query = query.select('-__v');
-      }
-      // --------------------------- Pagination ----------------------------------
-      const page = +req.query.page || 1;
-      const limit = +req.query.limit || 100;
-      const skip = (page - 1) * limit;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .fieldFilter()
+      .pagination();
+    const tours = await features.query;
 
-      query = query.skip(skip).limit(limit);
-
-      // handel empty page
-      if (req.query.page) {
-        const countDocs = await Tour.countDocuments();
-        if (skip >= countDocs) throw new Error('The Page Is Not Exist...');
-      }
-
-      // --------------------------- Await ---------------------------------------
-      tours = await query;
-    } else {
-      // Get All Tours
-      tours = await Tour.find();
-    }
-
+    // Response
     res.status(200).json({
       status: 'success',
       results: tours.length,
@@ -70,7 +29,7 @@ exports.getAllTours = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      data: 'Something went wrong...',
+      data: err,
     });
   }
 };
