@@ -44,6 +44,10 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       required: [true, 'The Sammary Must Be Insert.'],
     },
+    vipTour: {
+      type: Boolean,
+      default: false,
+    },
     description: {
       type: String,
       trim: true,
@@ -71,6 +75,11 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.find({ vipTour: { $ne: true } });
   next();
 });
 
