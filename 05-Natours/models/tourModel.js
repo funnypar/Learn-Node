@@ -7,10 +7,21 @@ const tourSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: [true, 'The Name Must Be Insert.'],
+      maxlength: [30, 'The Name Must Have Lower Than 30 Characters.'],
+      minlength: [5, 'The Name Must Have More Than 5 Characters.'],
     },
     price: {
       type: Number,
       required: [true, 'The Price Must Be Insert.'],
+    },
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return val < this.price;
+        },
+        message: `The Price (${this.price}) Must Be Grater Than Price Discount ({VALUE})! `,
+      },
     },
     duration: {
       type: Number,
@@ -19,11 +30,17 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'The Difficulty Must Be Insert.'],
+      enum: {
+        values: ['easy', 'difficult', 'medium'],
+        message: 'Difficulty Is Either: easy, medium or difficult.',
+      },
     },
     ratingsQuantity: {
       type: Number,
       default: 4.5,
       required: [true, 'The Raiting Must Be Insert.'],
+      max: [5, "The Rating's quantity Must be Lower Or Equal 5."],
+      min: [1, "The Rating's quantity Must be Higher Or Equal 1."],
     },
     ratingsAverage: {
       type: Number,
