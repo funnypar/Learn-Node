@@ -106,8 +106,17 @@ exports.deleteTour = async (req, res) => {
 exports.toursStats = async (req, res) => {
   try {
     const stats = await Tour.aggregate([
-      { $match: { price: { $gte: 100 } } },
-      { $group: { _id: 'difficulty', avgPrice: { $avg: '$price' } } },
+      { $match: { price: { $gte: 50 } } },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          avgPrice: { $avg: '$price' },
+          numTours: { $sum: 1 },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      { $sort: { avgPrice: 1 } },
     ]);
 
     res.status(200).json({
