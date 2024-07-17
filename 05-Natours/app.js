@@ -23,7 +23,8 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
-app.all('*', (req, res, next) => {
+app.all('*', (err, req, res, next) => {
+  console.log(err.stack);
   next(new AppError(`The ${req.url} is not found!`));
 });
 

@@ -1,5 +1,6 @@
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 // Middelwares
@@ -30,6 +31,11 @@ exports.getAllTours = catchAsync(async (req, res) => {
 
 exports.getOneTour = catchAsync(async (req, res) => {
   const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return new AppError('Tour not found...', 404);
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -51,6 +57,10 @@ exports.createTour = catchAsync(async (req, res) => {
 exports.patchTour = catchAsync(async (req, res) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body);
 
+  if (!tour) {
+    return new AppError('Tour not found...', 404);
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -60,7 +70,11 @@ exports.patchTour = catchAsync(async (req, res) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    return new AppError('Tour not found...', 404);
+  }
 
   res.status(200).json({
     status: 'success',
@@ -82,6 +96,10 @@ exports.toursStats = catchAsync(async (req, res) => {
     },
     { $sort: { avgPrice: 1 } },
   ]);
+
+  if (!stats) {
+    return new AppError('Something went wrong...', 404);
+  }
 
   res.status(200).json({
     status: 'success',
